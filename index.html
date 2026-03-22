@@ -1,435 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>whatifs.fun — games, experiments & simulations</title>
-    <meta name="description" content="A collection of fun interactive games, experiments, and simulations. Draw perfect circles, test your reflexes, simulate nuclear scenarios, and more.">
-    <meta property="og:title" content="whatifs.fun — games, experiments & simulations">
-    <meta property="og:description" content="A collection of fun interactive games, experiments, and simulations.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://whatifs.fun">
-
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-13KHBC5TPS"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-13KHBC5TPS');
-    </script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-    <style>
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg: #0a0a0b;
-            --card-bg: #141416;
-            --card-border: #222226;
-            --text: #f0efe9;
-            --text-dim: #8a8a8e;
-            --accent-red: #ff3c3c;
-            --accent-cyan: #00f0ff;
-            --accent-green: #39ff7f;
-            --accent-orange: #ff8c2e;
-            --accent-purple: #b44cff;
-            --accent-yellow: #ffe03c;
-        }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Syne', sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        .header {
-            text-align: center;
-            padding: 60px 24px 20px;
-            position: relative;
-        }
-
-        .logo {
-            font-family: 'Space Mono', monospace;
-            font-size: clamp(2.2rem, 6vw, 3.8rem);
-            font-weight: 700;
-            letter-spacing: -2px;
-            margin-bottom: 8px;
-        }
-
-        .logo .what { color: var(--text); }
-        .logo .ifs { color: var(--accent-cyan); }
-        .logo .dot { color: var(--accent-red); }
-        .logo .fun { color: var(--accent-green); }
-
-        .tagline {
-            font-size: clamp(0.85rem, 2vw, 1.05rem);
-            color: var(--text-dim);
-            font-weight: 400;
-            letter-spacing: 0.5px;
-        }
-
-        .counter {
-            text-align: center;
-            padding: 24px 24px 0;
-        }
-
-        .counter span {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--card-border);
-            padding: 6px 16px;
-            border-radius: 100px;
-            letter-spacing: 1px;
-        }
-
-        .grid-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 40px 24px 80px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-            background: var(--card-bg);
-            cursor: pointer;
-            transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1), 
-                        border-color 0.3s ease,
-                        box-shadow 0.3s ease;
-            text-decoration: none;
-            display: block;
-            aspect-ratio: 16 / 10;
-        }
-
-        .card:hover {
-            transform: translateY(-6px) scale(1.015);
-            border-color: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        .card-inner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 32px 24px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .card-icon {
-            font-size: 3rem;
-            margin-bottom: 16px;
-            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
-        }
-
-        .card-title {
-            font-family: 'Space Mono', monospace;
-            font-size: 1.15rem;
-            font-weight: 700;
-            text-align: center;
-            color: var(--text);
-            letter-spacing: -0.5px;
-            line-height: 1.3;
-        }
-
-        .card-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            text-align: center;
-            margin-top: 6px;
-            font-weight: 400;
-        }
-
-        .card--circle {
-            background: radial-gradient(ellipse at 30% 80%, rgba(255, 60, 60, 0.15), transparent 60%),
-                        radial-gradient(ellipse at 70% 20%, rgba(255, 60, 60, 0.08), transparent 50%),
-                        var(--card-bg);
-        }
-        .card--circle:hover { border-color: var(--accent-red); }
-        .card--circle .card-title { color: var(--accent-red); }
-        .card--circle .ring {
-            position: absolute;
-            width: 180px; height: 180px;
-            border: 2px solid rgba(255, 60, 60, 0.15);
-            border-radius: 50%;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-        }
-        .card--circle .ring::after {
-            content: '';
-            position: absolute;
-            width: 120px; height: 120px;
-            border: 1px solid rgba(255, 60, 60, 0.08);
-            border-radius: 50%;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .card--reflex {
-            background: radial-gradient(ellipse at 60% 70%, rgba(0, 240, 255, 0.12), transparent 60%),
-                        radial-gradient(ellipse at 20% 30%, rgba(0, 240, 255, 0.06), transparent 50%),
-                        var(--card-bg);
-        }
-        .card--reflex:hover { border-color: var(--accent-cyan); }
-        .card--reflex .card-title { color: var(--accent-cyan); }
-
-        .card--nuclear {
-            background: radial-gradient(ellipse at 50% 90%, rgba(255, 140, 46, 0.15), transparent 60%),
-                        radial-gradient(ellipse at 80% 20%, rgba(255, 227, 60, 0.06), transparent 50%),
-                        var(--card-bg);
-        }
-        .card--nuclear:hover { border-color: var(--accent-orange); }
-        .card--nuclear .card-title { color: var(--accent-orange); }
-
-        .card--memory {
-            background: radial-gradient(ellipse at 40% 70%, rgba(180, 76, 255, 0.15), transparent 60%),
-                        radial-gradient(ellipse at 80% 30%, rgba(180, 76, 255, 0.08), transparent 50%),
-                        var(--card-bg);
-        }
-        .card--memory:hover { border-color: var(--accent-purple); }
-        .card--memory .card-title { color: var(--accent-purple); }
-
-        .card--soon {
-            background: var(--card-bg);
-            opacity: 0.45;
-            cursor: default;
-        }
-        .card--soon:hover {
-            transform: none;
-            border-color: var(--card-border);
-            box-shadow: none;
-        }
-        .card--soon .card-title { color: var(--text-dim); }
-        .card--soon .badge {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-dim);
-            background: rgba(255,255,255,0.05);
-            padding: 4px 12px;
-            border-radius: 100px;
-            margin-top: 10px;
-        }
-
-        .badge-new {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--bg);
-            background: var(--accent-green);
-            padding: 3px 10px;
-            border-radius: 100px;
-            z-index: 3;
-            font-weight: 700;
-        }
-
-        .pulse-dot {
-            display: inline-block;
-            width: 6px; height: 6px;
-            background: var(--text-dim);
-            border-radius: 50%;
-            margin-right: 6px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-
-        .card {
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeUp 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-        }
-
-        .card:nth-child(1) { animation-delay: 0.1s; }
-        .card:nth-child(2) { animation-delay: 0.18s; }
-        .card:nth-child(3) { animation-delay: 0.26s; }
-        .card:nth-child(4) { animation-delay: 0.34s; }
-        .card:nth-child(5) { animation-delay: 0.42s; }
-        .card:nth-child(6) { animation-delay: 0.50s; }
-
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card--soon {
-            animation: fadeUpDim 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-        }
-
-        @keyframes fadeUpDim {
-            to {
-                opacity: 0.45;
-                transform: translateY(0);
-            }
-        }
-
-        .header {
-            opacity: 0;
-            animation: fadeIn 0.8s ease forwards;
-        }
-
-        .counter {
-            opacity: 0;
-            animation: fadeIn 0.8s ease 0.3s forwards;
-        }
-
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
-        .footer {
-            text-align: center;
-            padding: 20px 24px 60px;
-            font-size: 0.78rem;
-            color: var(--text-dim);
-            font-family: 'Space Mono', monospace;
-        }
-
-        .footer a {
-            color: var(--text-dim);
-            text-decoration: none;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            transition: color 0.2s;
-        }
-
-        .footer a:hover { color: var(--text); }
-
-        @media (max-width: 700px) {
-            .grid { grid-template-columns: 1fr; }
-            .header { padding: 40px 20px 16px; }
-            .grid-container { padding: 30px 16px 60px; }
-            .card { aspect-ratio: 16 / 9; }
-        }
-
-        @media (min-width: 701px) and (max-width: 1000px) {
-            .grid { grid-template-columns: repeat(2, 1fr); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Command Center</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', -apple-system, sans-serif; background: #FAFAFA; color: #1A1A1A; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  input:focus, textarea:focus { border-color: #E8734A !important; outline: none; }
+  input::placeholder, textarea::placeholder { color: #B0B0B0; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #D0D0D0; border-radius: 3px; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .card { transition: all 0.2s ease; }
+  .card:hover { border-color: rgba(0,0,0,0.12) !important; }
+  .check-row { transition: all 0.15s ease; border-radius: 8px; }
+  .check-row:hover { background: rgba(0,0,0,0.02); }
+  .tab-btn { transition: all 0.2s ease; cursor: pointer; border: none; font-family: 'Outfit', sans-serif; }
+  .tab-btn:hover { color: #E8734A !important; }
+  .main { max-width: 820px; margin: 0 auto; padding: 0 24px 80px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-end; padding: 28px 0 24px; border-bottom: 1px solid rgba(0,0,0,0.08); margin-bottom: 36px; flex-wrap: wrap; gap: 16px; }
+  .brand { font-size: 11px; font-weight: 800; letter-spacing: 4px; color: #E8734A; text-transform: uppercase; margin-bottom: 6px; }
+  .date { font-size: 13px; color: #888; font-weight: 400; }
+  .tabs { display: flex; gap: 2px; background: rgba(0,0,0,0.04); border-radius: 10px; padding: 3px; }
+  .tab-btn { padding: 8px 18px; font-size: 12px; font-weight: 600; border-radius: 8px; letter-spacing: 0.5px; text-transform: uppercase; background: transparent; color: #999; }
+  .tab-btn.active { background: rgba(232,115,74,0.1); color: #E8734A; }
+  h1 { font-size: 26px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.5px; color: #1A1A1A; }
+  .subtitle { font-size: 14px; color: #888; margin-bottom: 32px; font-weight: 400; }
+  .section-label { font-size: 11px; font-weight: 700; color: #999; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+  .section-label.muted { color: #CCC; }
+  .progress-wrap { margin-bottom: 36px; }
+  .progress-header { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: baseline; }
+  .progress-pct { font-size: 24px; font-weight: 800; }
+  .progress-bar { height: 4px; background: rgba(0,0,0,0.06); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .move-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .move-num { font-size: 12px; font-weight: 800; color: #E8734A; width: 24px; text-align: center; }
+  .move-input { flex: 1; padding: 12px 16px; font-size: 14px; font-weight: 500; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; background: #FFFFFF; color: #1A1A1A; font-family: 'Outfit', sans-serif; }
+  .project-card { border-radius: 12px; border: 1px solid rgba(0,0,0,0.07); background: #FFFFFF; overflow: hidden; margin-bottom: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+  .project-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; cursor: pointer; user-select: none; }
+  .project-left { display: flex; align-items: center; gap: 12px; }
+  .project-right { display: flex; align-items: center; gap: 14px; }
+  .project-emoji { font-size: 18px; }
+  .project-name { font-size: 14px; font-weight: 700; color: #1A1A1A; }
+  .tier-badge { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 5px; letter-spacing: 0.8px; }
+  .check-count { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .arrow { font-size: 9px; color: #CCC; transition: transform 0.2s; display: inline-block; }
+  .arrow.open { transform: rotate(90deg); }
+  .project-body { padding: 0 18px 16px; animation: fadeIn 0.2s ease; }
+  .project-note { font-size: 12px; color: #888; padding: 8px 12px; background: #F5F5F5; border-radius: 8px; margin-bottom: 12px; line-height: 1.6; font-style: italic; }
+  .check-row { display: flex; align-items: center; gap: 14px; padding: 10px 8px; cursor: pointer; user-select: none; }
+  .checkbox { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #D0D0D0; background: transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s ease; }
+  .checkbox.done { border-color: #5BB5A2; background: #5BB5A2; }
+  .checkmark { color: #fff; font-size: 11px; font-weight: 800; }
+  .check-text { font-size: 13px; color: #555; font-weight: 500; line-height: 1.5; transition: all 0.15s ease; }
+  .check-text.done { color: #CCC; text-decoration: line-through; font-weight: 400; }
+  .off-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .off-pill { display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: #F0F0F0; border: 1px solid rgba(0,0,0,0.05); border-radius: 8px; font-size: 12px; color: #AAA; }
+  .off-pill .days { font-size: 10px; color: #CCC; margin-left: 4px; }
+  textarea { width: 100%; padding: 14px 16px; font-size: 13px; font-weight: 400; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; background: #FFFFFF; color: #1A1A1A; font-family: 'Outfit', sans-serif; resize: vertical; line-height: 1.7; }
+  .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .week-day { padding: 10px 8px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.06); min-height: 90px; background: #FFFFFF; }
+  .week-day.today { border-color: rgba(232,115,74,0.3); background: rgba(232,115,74,0.03); }
+  .week-day-name { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: #AAA; margin-bottom: 8px; text-transform: uppercase; }
+  .week-day.today .week-day-name { color: #E8734A; }
+  .week-pill { font-size: 9px; padding: 3px 5px; background: #F5F5F5; border-radius: 4px; margin-bottom: 3px; color: #888; line-height: 1.4; }
+  .week-pill.plan { background: rgba(232,115,74,0.08); color: #E8734A; }
+  .tier-section { margin-bottom: 36px; }
+  .tier-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .tier-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .tier-title { font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #1A1A1A; }
+  .all-card { padding: 16px 18px; margin-bottom: 6px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.07); background: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+  .all-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .all-card-note { font-size: 12px; color: #888; margin-bottom: 8px; font-style: italic; line-height: 1.6; }
+  .all-card-sched { font-size: 11px; color: #5BB5A2; font-weight: 700; margin-bottom: 8px; }
+  .all-card-check { font-size: 12px; color: #888; line-height: 1.6; }
+  .view-content { animation: fadeIn 0.3s ease; }
+  .wc-box { padding: 12px 16px; background: #FFFFFF; border: 1px solid rgba(0,0,0,0.07); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+  @media (max-width: 640px) {
+    .week-grid { grid-template-columns: repeat(4, 1fr); }
+    .header { flex-direction: column; align-items: flex-start; }
+  }
+</style>
 </head>
 <body>
-
-    <header class="header">
-        <div class="logo">
-            <span class="what">what</span><span class="ifs">ifs</span><span class="dot">.</span><span class="fun">fun</span>
-        </div>
-        <p class="tagline">games, experiments & simulations</p>
-    </header>
-
-    <div class="counter">
-        <span>4 EXPERIENCES LIVE — MORE COMING</span>
-    </div>
-
-    <main class="grid-container">
-        <div class="grid">
-
-            <!-- Perfect Circle -->
-            <a href="./perfect-circle/" class="card card--circle">
-                <div class="ring"></div>
-                <span class="badge-new">NEW</span>
-                <div class="card-inner">
-                    <div class="card-icon">⭕</div>
-                    <div class="card-title">Perfect Circle</div>
-                    <div class="card-subtitle">Can you draw a perfect circle?</div>
-                </div>
-            </a>
-
-            <!-- Reflex Test -->
-            <a href="./reflex-test/" class="card card--reflex">
-                <span class="badge-new">NEW</span>
-                <div class="card-inner">
-                    <div class="card-icon">⚡</div>
-                    <div class="card-title">Reflex Test</div>
-                    <div class="card-subtitle">How fast are your reflexes?</div>
-                </div>
-            </a>
-
-            <!-- Nuclear Simulation -->
-            <a href="./nuclear-simulation/" class="card card--nuclear">
-                <span class="badge-new">NEW</span>
-                <div class="card-inner">
-                    <div class="card-icon">☢️</div>
-                    <div class="card-title">Nuclear Simulation</div>
-                    <div class="card-subtitle">Simulate nuclear scenarios</div>
-                </div>
-            </a>
-
-            <!-- Memory Test -->
-            <a href="./memory-test/" class="card card--memory">
-                <span class="badge-new">NEW</span>
-                <div class="card-inner">
-                    <div class="card-icon">🧠</div>
-                    <div class="card-title">Memory Test</div>
-                    <div class="card-subtitle">How good is your memory?</div>
-                </div>
-            </a>
-
-            <!-- Coming Soon placeholders -->
-            <div class="card card--soon">
-                <div class="card-inner">
-                    <div class="card-icon">🎨</div>
-                    <div class="card-title">Color Match</div>
-                    <div class="card-subtitle">How well do you see color?</div>
-                    <div class="badge"><span class="pulse-dot"></span>Coming Soon</div>
-                </div>
-            </div>
-
-            <div class="card card--soon">
-                <div class="card-inner">
-                    <div class="card-icon">🌍</div>
-                    <div class="card-title">???</div>
-                    <div class="card-subtitle">Something cool is coming</div>
-                    <div class="badge"><span class="pulse-dot"></span>Coming Soon</div>
-                </div>
-            </div>
-
-        </div>
-    </main>
-
-    <footer class="footer">
-        whatifs.fun — built for fun, not profit
-    </footer>
-
+<div class="main" id="app"></div>
+<script>
+const TIERS={1:{label:"DAILY",color:"#E8734A"},2:{label:"WEEKLY",color:"#5BB5A2"},3:{label:"PARKED",color:"#9CA3AF"}};
+const PROJECTS=[
+  {id:"growtoro-clients",name:"Growtoro Clients",tier:1,emoji:"💰",checks:["Check Instantly dashboards — campaigns running smoothly?","Reply to client emails/messages","New client onboarding tasks?","Loom videos for warm prospects?"],note:"Newsletter growth clients (10), PricingSaaS, Gassée, Peptide Centre"},
+  {id:"newsletter-skool",name:"Newsletter Growth Skool",tier:1,emoji:"🎓",checks:["Module recording — what's next?","Skool platform build progress","Cold outreach replies to handle?","Personalized Loom videos to send?"],note:"TARGET: 200 members in 90 days. 40K emails ready."},
+  {id:"brendan-ai",name:"Brendan AI Channels",tier:1,emoji:"🎥",checks:["Create and post content today","Engage — reply to comments","Capture content ideas"],note:"Personal brand. AI content, tutorials, behind-the-scenes."},
+  {id:"auto-twitter",name:"Auto-Twitter System",tier:1,emoji:"🤖",checks:["All 3 accounts posted? Quick glance.","Zernio errors?","Engagement worth responding to?"],note:"@brendanwardai (4/day), @EveryFreeTool (8/day), @ifswhat91839 (8/day)"},
+  {id:"everyfreetool",name:"EveryFreeTool.com",tier:1,emoji:"🔧",checks:["Blog autopublish running?","GA4 — traffic trends?","New batch this week?","Backlink campaign replies?"],note:"517+ tools. Mediavine target: 50K sessions by Aug-Sep 2026."},
+  {id:"whatifs",name:"WhatIfs.fun",tier:1,emoji:"🎮",checks:["Launchd auto-build deployed today?","Queue stocked for the week?","GA4 — traffic check","Blog queue stocked?"],note:"164+ games. Auto-generating 10/day via launchd."},
+  {id:"quizzy",name:"Quizzy.fun",tier:1,emoji:"❓",checks:["Launchd auto-build deployed today?","Queue stocked for the week?","GA4 — traffic check","Blog queue stocked?"],note:"230+ quizzes. Auto-generating 30/day via launchd."},
+  {id:"va-ops",name:"VA Operations",tier:2,emoji:"👤",checks:["Weekly report reviewed?","Tasks to assign or redirect?","Content going out on schedule?"],note:"$300/mo, 5 hrs/day. Reddit, TikTok, IG, LinkedIn, Quora.",days:["Monday","Friday"]},
+  {id:"backlinks",name:"Backlink Campaigns",tier:2,emoji:"🔗",checks:["Campaigns live? Check reply rates.","Positive replies to follow up?","New prospect lists needed?"],note:"6 sequences. ~11K contacts across 11 audiences.",days:["Wednesday"]},
+  {id:"mvp-templates",name:"MVP Templates",tier:2,emoji:"📰",checks:["Next issue planned/written?","Podcast episode status?","Engagement metrics?"],note:"30K subs. Podcast launching.",days:["Wednesday"]},
+  {id:"lead-finder",name:"Growtoro Lead Finder",tier:3,emoji:"🔍",checks:["Signups or payments?","Cleanup diagnostic routes","Bug reports?"],note:"leads.growtoro.com. Needs cleanup before traffic."},
+  {id:"integrity-cap",name:"Integrity Cap / BE",tier:3,emoji:"🏦",checks:["Requests from Matt?","Campaign performance?"],note:"8 calculator tools live. Nurture sequences running."},
+  {id:"ai-cheat-code",name:"AI Cheat Code Skool",tier:3,emoji:"⚡",checks:["Capture ideas as you learn","Don't build yet — Newsletter Skool first"],note:"QUEUED. Launch after Newsletter Skool hits 100+ members."},
+];
+const WEEKLY_CHECKS=["Fill whatifs.fun game queue (Sunday)","Fill quizzy.fun quiz queue (Sunday)","Approve auto-twitter posts for the week","Stage blog posts for all 3 properties","Review VA weekly report","Check GA4 across all 3 properties","Review Instantly campaign metrics","Check Lead Finder for signups","Send client deliverables due this week"];
+const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+let state={view:"daily",checks:{},moves:["",""],note:"",weekNotes:"",weekPriorities:["","","","",""],open:null};
+const now=new Date(),dayName=now.toLocaleDateString("en-US",{weekday:"long"}),dateKey=now.toISOString().split("T")[0];
+const dateDisplay=now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+const hour=now.getHours(),greeting=hour<12?"Good morning":hour<17?"Good afternoon":"Good evening";
+function load(){try{const d=JSON.parse(localStorage.getItem(`cc-${dateKey}`)||"null");if(d){state.checks=d.c||{};state.moves=d.m||["",""];state.note=d.n||"";}}catch(e){}try{const w=JSON.parse(localStorage.getItem("cc-week")||"null");if(w){state.weekNotes=w.n||"";state.weekPriorities=w.p||["","","","",""];}}catch(e){}}
+function saveDay(){localStorage.setItem(`cc-${dateKey}`,JSON.stringify({c:state.checks,m:state.moves,n:state.note}));}
+function saveWeek(){localStorage.setItem("cc-week",JSON.stringify({n:state.weekNotes,p:state.weekPriorities}));}
+function isScheduled(p){return p.tier===1||(p.days&&p.days.includes(dayName));}
+function countDone(p){let d=0;p.checks.forEach((_,i)=>{if(state.checks[`${p.id}-${i}`])d++;});return d;}
+function h(tag,attrs,...children){const el=document.createElement(tag);if(attrs)Object.entries(attrs).forEach(([k,v])=>{if(k==="style"&&typeof v==="object")Object.assign(el.style,v);else if(k.startsWith("on"))el.addEventListener(k.slice(2).toLowerCase(),v);else if(k==="className")el.className=v;else if(k==="innerHTML")el.innerHTML=v;else el.setAttribute(k,v);});children.flat(9).forEach(c=>{if(c!=null)el.append(typeof c==="string"?document.createTextNode(c):c);});return el;}
+function render(){const app=document.getElementById("app");app.innerHTML="";app.append(h("div",{className:"header"},h("div",null,h("div",{className:"brand"},"Command Center"),h("div",{className:"date"},dateDisplay)),h("div",{style:{display:"flex",alignItems:"center",gap:"16px"}},h("div",{className:"tabs"},...["daily","weekly","all"].map(v=>h("button",{className:`tab-btn ${state.view===v?"active":""}`,onClick:()=>{state.view=v;render();}},v==="daily"?"Today":v==="weekly"?"Week":"All"))))));if(state.view==="daily")renderDaily(app);else if(state.view==="weekly")renderWeekly(app);else renderAll(app);}
+function renderDaily(app){const wrap=h("div",{className:"view-content"});const today=PROJECTS.filter(isScheduled),off=PROJECTS.filter(p=>!isScheduled(p));let totalDone=0,totalItems=0;today.forEach(p=>{p.checks.forEach((_,i)=>{totalItems++;if(state.checks[`${p.id}-${i}`])totalDone++;});});const pct=totalItems>0?Math.round((totalDone/totalItems)*100):0;wrap.append(h("h1",null,`${greeting}, Brendan.`));wrap.append(h("p",{className:"subtitle"},`${today.length} projects on deck · ${totalItems-totalDone} items remaining`));const pw=h("div",{className:"progress-wrap"});pw.append(h("div",{className:"progress-header"},h("span",{className:"section-label",style:{marginBottom:"0"}},"Progress"),h("span",{className:"progress-pct",style:{color:pct===100?"#5BB5A2":"#1A1A1A"}},`${pct}%`)));const bar=h("div",{className:"progress-bar"});bar.append(h("div",{className:"progress-fill",style:{width:`${pct}%`,background:pct===100?"#5BB5A2":pct>60?"linear-gradient(90deg,#E8734A,#5BB5A2)":"#E8734A"}}));pw.append(bar);wrap.append(pw);const bm=h("div",{style:{marginBottom:"40px"}});bm.append(h("div",{className:"section-label",innerHTML:"🎯 Big Moves Today"}));state.moves.forEach((m,i)=>{const row=h("div",{className:"move-row"});row.append(h("span",{className:"move-num"},`${i+1}`));const inp=h("input",{className:"move-input",placeholder:i===0?"What MUST happen today?":"Second priority (optional)",value:m});inp.addEventListener("input",e=>{state.moves[i]=e.target.value;saveDay();});row.append(inp);bm.append(row);});wrap.append(bm);const ps=h("div",{style:{marginBottom:"40px"}});ps.append(h("div",{className:"section-label",innerHTML:"📋 Check-Ins"}));today.forEach(p=>{const d=countDone(p),allDone=d===p.checks.length,isOpen=state.open===p.id;const card=h("div",{className:"card project-card",style:{borderLeft:`3px solid ${TIERS[p.tier].color}`,opacity:allDone?"0.45":"1"}});const hdr=h("div",{className:"project-header",onClick:()=>{state.open=isOpen?null:p.id;render();}});hdr.append(h("div",{className:"project-left"},h("span",{className:"project-emoji"},p.emoji),h("span",{className:"project-name"},p.name),h("span",{className:"tier-badge",style:{background:`${TIERS[p.tier].color}15`,color:TIERS[p.tier].color}},TIERS[p.tier].label)));hdr.append(h("div",{className:"project-right"},h("span",{className:"check-count",style:{color:allDone?"#5BB5A2":"#CCC"}},`${d}/${p.checks.length}`),h("span",{className:`arrow ${isOpen?"open":""}`},"▶")));card.append(hdr);if(isOpen){const body=h("div",{className:"project-body"});if(p.note)body.append(h("div",{className:"project-note"},p.note));const cl=h("div",null);p.checks.forEach((item,i)=>{const ck=!!state.checks[`${p.id}-${i}`];const row=h("div",{className:"check-row",onClick:()=>{state.checks[`${p.id}-${i}`]=!ck;saveDay();render();}});row.append(h("div",{className:`checkbox ${ck?"done":""}`},ck?h("span",{className:"checkmark"},"✓"):null));row.append(h("span",{className:`check-text ${ck?"done":""}`},item));cl.append(row);});body.append(cl);card.append(body);}ps.append(card);});wrap.append(ps);if(off.length){const os=h("div",{style:{marginBottom:"40px"}});os.append(h("div",{className:"section-label muted"},"Not Scheduled Today"));const grid=h("div",{className:"off-grid"});off.forEach(p=>{const pill=h("div",{className:"off-pill"},h("span",null,p.emoji),h("span",{style:{fontWeight:"600"}},p.name));if(p.days)pill.append(h("span",{className:"days"},`· ${p.days.map(d=>d.slice(0,3)).join(", ")}`));grid.append(pill);});os.append(grid);wrap.append(os);}const ns=h("div",null);ns.append(h("div",{className:"section-label",innerHTML:"📝 End of Day"}));const ta=h("textarea",{rows:"4",placeholder:"Wins, blockers, what's carrying to tomorrow..."});ta.value=state.note;ta.addEventListener("input",e=>{state.note=e.target.value;saveDay();});ns.append(ta);wrap.append(ns);app.append(wrap);}
+function renderWeekly(app){const wrap=h("div",{className:"view-content"});wrap.append(h("h1",null,"Weekly Planning"));wrap.append(h("p",{className:"subtitle"},"Sunday night ritual. Set priorities, fill queues, review."));const pr=h("div",{style:{marginBottom:"40px"}});pr.append(h("div",{className:"section-label",innerHTML:"🎯 This Week's Priorities"}));state.weekPriorities.forEach((p,i)=>{const row=h("div",{className:"move-row"});row.append(h("span",{className:"move-num"},`${i+1}`));const inp=h("input",{className:"move-input",placeholder:`Priority #${i+1}`,value:p});inp.addEventListener("input",e=>{state.weekPriorities[i]=e.target.value;saveWeek();});row.append(inp);pr.append(row);});wrap.append(pr);const wc=h("div",{style:{marginBottom:"40px"}});wc.append(h("div",{className:"section-label",innerHTML:"📋 Weekly Checklist"}));const wcBox=h("div",{className:"wc-box"});WEEKLY_CHECKS.forEach((item,i)=>{const ck=!!state.checks[`wk-${i}`];const row=h("div",{className:"check-row",onClick:()=>{state.checks[`wk-${i}`]=!ck;saveDay();render();}});row.append(h("div",{className:`checkbox ${ck?"done":""}`},ck?h("span",{className:"checkmark"},"✓"):null));row.append(h("span",{className:`check-text ${ck?"done":""}`},item));wcBox.append(row);});wc.append(wcBox);wrap.append(wc);const wm=h("div",{style:{marginBottom:"40px"}});wm.append(h("div",{className:"section-label",innerHTML:"📅 Week at a Glance"}));const grid=h("div",{className:"week-grid"});DAYS.forEach(day=>{const isToday=day===dayName;const dp=PROJECTS.filter(p=>p.tier===1||(p.days&&p.days.includes(day)));const col=h("div",{className:`week-day ${isToday?"today":""}`});col.append(h("div",{className:"week-day-name"},`${day.slice(0,3)}${isToday?" ←":""}`));dp.forEach(p=>col.append(h("div",{className:"week-pill"},`${p.emoji} ${p.name.length>12?p.name.slice(0,12)+"…":p.name}`)));if(day==="Sunday")col.append(h("div",{className:"week-pill plan"},"📋 Plan Week"));grid.append(col);});wm.append(grid);wrap.append(wm);const ns=h("div",null);ns.append(h("div",{className:"section-label",innerHTML:"📝 Weekly Notes"}));const ta=h("textarea",{rows:"5",placeholder:"Wins this week, lessons, carrying to next week..."});ta.value=state.weekNotes;ta.addEventListener("input",e=>{state.weekNotes=e.target.value;saveWeek();});ns.append(ta);wrap.append(ns);app.append(wrap);}
+function renderAll(app){const wrap=h("div",{className:"view-content"});wrap.append(h("h1",null,"All Projects"));wrap.append(h("p",{className:"subtitle"},"Everything running, organized by attention tier."));[1,2,3].forEach(tier=>{const tp=PROJECTS.filter(p=>p.tier===tier);if(!tp.length)return;const section=h("div",{className:"tier-section"});section.append(h("div",{className:"tier-header"},h("div",{className:"tier-dot",style:{background:TIERS[tier].color}}),h("span",{className:"tier-title"},`Tier ${tier}: ${TIERS[tier].label}`)));tp.forEach(p=>{const card=h("div",{className:"all-card",style:{borderLeft:`3px solid ${TIERS[tier].color}`}});card.append(h("div",{className:"all-card-header"},h("span",{style:{fontSize:"18px"}},p.emoji),h("span",{style:{fontSize:"14px",fontWeight:"700"}},p.name)));if(p.note)card.append(h("div",{className:"all-card-note"},p.note));if(p.days)card.append(h("div",{className:"all-card-sched"},`Scheduled: ${p.days.join(", ")}`));const cl=h("div",null);p.checks.forEach(c=>cl.append(h("div",{className:"all-card-check"},`• ${c}`)));card.append(cl);section.append(card);});wrap.append(section);});app.append(wrap);}
+load();render();
+</script>
 </body>
 </html>
